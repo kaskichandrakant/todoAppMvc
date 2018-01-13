@@ -17,16 +17,25 @@ class user {
     let todo=new todo(title,description)
     userInfo[title]=todo;
   }
-  removeTodo(userName,title){
+  removeTodoList(userName,title){
     let userInfo=this.allUsers[userName];
     delete userInfo[title];
   }
   changeTitle(userName,currentTitle,newTitle){
     let todoInfo=this.allUsers[userName][currentTitle];
     todoInfo.changeTitle(newTitle);
+    delete this.allUsers[userName][currentTitle];
   }
   changeDescription(userName,title,newDescription){
     let todoInfo=this.allUsers[userName][currentTitle];
     todoInfo.changeDescription(newDescription)
+  }
+  addTask(userName,title,task){
+    let todoInfo=this.allUsers[userName][title];
+    todoInfo.addTask(task);
+  }
+  getTasks(userName,title){
+    let todoInfo=this.allUsers[userName][title]
+    return todoInfo.getTasks();
   }
 }

@@ -5,17 +5,17 @@ class todo {
     this.description=description;
     this.items={};
   }
-  addItem(task) {
-    this.items[task]=new Item(task);
-  }
   getTitle(){
     return this.title;
   }
   getDescription(){
     return this.description;
   }
+  addTask(task) {
+    this.items[task]=new Item(task);
+  }
   changeTitle(newTitle){
-    this.tite=newTitle;
+    this.title=newTitle;
   }
   changeDescription(newDes){
     this.description=newDes;
@@ -27,8 +27,17 @@ class todo {
     let currentTask=this.items[task];
     currentTask.markDone();
   }
-  taskNotDone(){
+  taskNotDone(task){
     let currentTask=this.items[task];
     currentTask.markNotDone();
   }
+  isDone(task){
+    let currentTask=this.items[task];
+    return currentTask.isDone();
+  }
+  getTasks(){
+    return this.items
+  }
 }
+
+module.exports=todo;
