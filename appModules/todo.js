@@ -1,8 +1,10 @@
 const Item = require('./item.js');
-class todo {
+class Todo {
   constructor(title,description) {
     this.title=title;
     this.description=description;
+    this.srNo=0;
+    this.totalItems=0;
     this.items={};
   }
   getTitle(){
@@ -12,7 +14,9 @@ class todo {
     return this.description;
   }
   addTask(task) {
-    this.items[task]=new Item(task);
+    this.addSrNo()
+    this.increaseTaskCount();
+    this.items[this.srNo]=new Item(task);
   }
   changeTitle(newTitle){
     this.title=newTitle;
@@ -20,24 +24,40 @@ class todo {
   changeDescription(newDes){
     this.description=newDes;
   }
-  removeItem(task){
-    delete this.items[task]
+  changeTask(srNo,newTask){
+    this.items[srNo].changeTask(newTask);
   }
-  taskDone(task){
-    let currentTask=this.items[task];
+  removeTask(srNo){
+    this.decreaseTaskCount();
+    delete this.items[srNo]
+  }
+  taskDone(srNo){
+    let currentTask=this.items[srNo];
     currentTask.markDone();
   }
-  taskNotDone(task){
-    let currentTask=this.items[task];
+  taskNotDone(srNo){
+    let currentTask=this.items[srNo];
     currentTask.markNotDone();
   }
-  isDone(task){
-    let currentTask=this.items[task];
+  isDone(srNo){
+    let currentTask=this.items[srNo];
     return currentTask.isDone();
   }
   getTasks(){
     return this.items
   }
+  addSrNo(){
+    this.srNo++;
+  }
+  increaseTaskCount(){
+    this.totalItems++;
+  }
+  decreaseTaskCount(){
+    this.totalItems--;
+  }
+  getTotalTaskCount(){
+    return this.totalItems;
+  }
 }
 
-module.exports=todo;
+module.exports=Todo;
