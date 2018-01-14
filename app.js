@@ -6,19 +6,15 @@ let logRequest = appUtility.logRequest;
 let getHeader = appUtility.getHeader;
 let isFile = appUtility.isFile;
 let getFileData = appUtility.getFileData;
-const dataBase = require('./data/data.json');
-const User = require('./appModules/user.js');
-let user=new User('./data/data.json');
-user.loadAllUsers();
-user.addTodoList('santosh','SOMETHING','nothing')
-user.addTask('santosh','SOMETHING','do somthing')
-user.addTask('santosh','SOMETHING','do somthing else')
-fs.writeFileSync('./data/dataBase.json', JSON.stringify(dataBase));
-console.log(user.getUserInfo('santosh'));
+let TodoApp = require('./appModules/todoApp.js')
+let todoApp = new TodoApp();
+todoApp.addAccount('santosh');
+let validUsers = todoApp.getAllAccounts();
 
+validUsers.push(todoApp.allAccount)
 let serveStaticFile = function(req, res) {
   let path = req.url;
-  if (path == '/'||path=='/login') {
+  if (path == '/' || path == '/login') {
     res.redirect('/login.html');
   }
   let filePath = './public' + path;
@@ -32,18 +28,17 @@ let serveStaticFile = function(req, res) {
   }
 }
 
-
 let serveFile = function(req, res) {
   if (req.method == "GET" && !req.url.startsWith('/Gu')) {
     serveStaticFile(req, res);
   }
 }
 let postLogin = (req, res) => {
-  let user = validUsers.find(u => u.name == req.body.userName);
-  userN = req.body.userName;
+  console.log(req.body);
+  let user = validUsers.find((u)=>typeof(u[req.body.userName])=='object'));
   if (!user) {
     res.setHeader('Set-Cookie', `logInFailed=true`);
-    res.redirect('/login.html');
+    res.redirect('/login');
     return;
   }
   let sessionid = new Date().getTime();
@@ -51,7 +46,6 @@ let postLogin = (req, res) => {
   user.sessionid = sessionid;
   res.redirect('/home');
 };
-
 let loadUser = (req, res) => {
   let sessionid = req.cookies.sessionid;
   let user = validUsers.find(u => u.sessionid == sessionid);
@@ -59,16 +53,25 @@ let loadUser = (req, res) => {
     req.user = user;
   }
 };
+let serveHomePage=(req,res)=>{
+  let data=getFileData('./public/home.html')
+  let userName=req.user.userName;
+  res.write(data.replace('user',userName));
+  res.end();
+}
 
 
-let app=WebApp.create();
+let app = WebApp.create();
 app.use(serveFile);
+app.post('/login', postLogin);
 app.use(loadUser);
-app.post('/login',postLogin);
+app.get('/home',serveHomePage);
 
-
-
-
+app.get('/logout', (req, res) => {
+  res.setHeader('Set-Cookie', [`loginFailed=false,Expires=${new Date(1).toUTCString()}`, `sessionid=0,Expires=${new Date(1).toUTCString()}`]);
+  delete req.user.sessionid;
+  res.redirect('/login');
+});
 
 
 module.exports = app;

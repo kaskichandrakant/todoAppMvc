@@ -1,58 +1,66 @@
 let Account = require('./account.js')
 class TodoApp {
   constructor() {
-    this.allAccount = {};
+    this.allAccount = [];
     this.totalAccounts = 0;
   }
   addAccount(userName) {
     this.totalAccounts++;
-    this.allAccount[userName] = new Account(userName);
+    this.allAccount.push(new Account(userName));
+  }
+  getAccount(userName){
+    return this.allAccount.find((u)=>u.userName)
   }
   addTodoList(userName, title, description) {
-    this.allAccount[userName].addTodoList(title, description)
+    this.getAccount(userName).addTodoList(title, description)
   }
   removeTodoList(userName, todoNo) {
-    delete this.allAccount[userName].removeTodoList(todoNo);
+    delete this.getAccount(userName).removeTodoList(todoNo);
   }
   changeTitle(userName, todoNo, newTitle) {
-    this.allAccount[userName].changeTitle(todoNo,newTitle);
-  }
-  getDescription(userName,todoNo) {
-    return this.allAccount[userName].getDescription(todoNo);
+    this.getAccount(userName).changeTitle(todoNo,newTitle);
   }
   changeDescription(userName,todoNo,newDescription) {
-    this.allAccount[userName].changeDescription(todoNo,newDescription);
+    this.getAccount(userName).changeDescription(todoNo,newDescription);
   }
   addTask(userName,todoNo,task) {
-    this.allAccount[userName].addTask(todoNo,task);
+    this.getAccount(userName).addTask(todoNo,task);
   }
   taskDone(userName,todoNo, taskNo) {
-    this.allAccount[userName].taskDone(todoNo,taskNo);
+    this.getAccount(userName).taskDone(todoNo,taskNo);
   }
   taskNotDone(userName,todoNo, taskNo) {
-    this.allAccount[userName].taskNotDone(todoNo,taskNo);
-  }
-  isDone(userName,todoNo, taskNo) {
-    return this.allAccount[userName].isDone(todoNo,taskNo);
+    this.getAccount(userName).taskNotDone(todoNo,taskNo);
   }
   changeTask(userName,todoNo,taskNo){
-    this.allAccount[userName].changeTask(todoNo,taskNo);
+    this.getAccount(userName).changeTask(todoNo,taskNo);
+  }
+  isDone(userName,todoNo, taskNo) {
+    return this.getAccount(userName).isDone(todoNo,taskNo);
+  }
+  getAllTodoLists(userName){
+    return this.getAccount(userName).getAllTodoLists();
   }
   getTasks(userName,todoNo) {
-    return this.allAccount[userName][todoNo].items;
+    return this.getAccount(userName).getTasks(todoNo);
   }
   getTotalTodoCount(userName) {
-    return this.allAccount[userName].getTotalTodoCount();
+    return this.getAccount(userName).getTotalTodoCount();
   }
   getTotalTaskCount(userName,todoNo) {
-    return this.allAccount[userName].getTotalTaskCount(todoNo);
+    return this.getAccount(userName).getTotalTaskCount(todoNo);
   }
   getTotalAccounts(){
     return this.totalAccounts;
   }
   getTitle(userName,todoNo) {
-    return this.allAccount[userName].getTitle(todoNo);
+    return this.getAccount(userName).getTitle(todoNo);
+  }
+  getDescription(userName,todoNo) {
+    return this.getAccount(userName).getDescription(todoNo);
+  }
+  getAllAccounts(){
+    return this.allAccount;
   }
 }
-
 module.exports=TodoApp;

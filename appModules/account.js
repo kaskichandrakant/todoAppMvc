@@ -37,7 +37,7 @@ class Account {
     todoList.addTask(task);
   }
   changeTask(todoNo,itemNo,newTask){
-    this.todolists[todoNo].changeTask(itemNo,newTask)
+    this.todoLists[todoNo].changeTask(itemNo,newTask)
   }
   taskDone(todoNo, taskNo) {
     let todoList = this.todoLists[todoNo]
@@ -59,6 +59,9 @@ class Account {
   }
   addSrNo() {
     this.srNo++;
+  }
+  getAllTodoLists(){
+    return this.todoLists;
   }
   increaseTodoCount() {
     this.totalTodoCount++;
