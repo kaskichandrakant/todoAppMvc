@@ -10,7 +10,6 @@ let TodoApp = require('./appModules/todoApp.js')
 let todoApp = new TodoApp();
 todoApp.addAccount('santosh');
 let validUsers = todoApp.getAllAccounts();
-
 validUsers.push(todoApp.allAccount)
 let serveStaticFile = function(req, res) {
   let path = req.url;
@@ -34,8 +33,7 @@ let serveFile = function(req, res) {
   }
 }
 let postLogin = (req, res) => {
-  console.log(req.body);
-  let user = validUsers.find((u)=>typeof(u[req.body.userName])=='object'));
+  let user = validUsers.find((u)=>u.userName==req.body.userName);
   if (!user) {
     res.setHeader('Set-Cookie', `logInFailed=true`);
     res.redirect('/login');
@@ -59,6 +57,15 @@ let serveHomePage=(req,res)=>{
   res.write(data.replace('user',userName));
   res.end();
 }
+let redirectLoggedInUserToHome = (req, res) => {
+  if (req.urlIsOneOf(['/', '/login']) && req.user) res.redirect('/home');
+}
+let getLogout=(req, res) => {
+  res.setHeader('Set-Cookie', [`loginFailed=false,Expires=${new Date(1).toUTCString()}`, `sessionid=0,Expires=${new Date(1).toUTCString()}`]);
+  delete req.user.sessionid;
+  res.redirect('/login');
+}
+
 
 
 let app = WebApp.create();
@@ -66,12 +73,9 @@ app.use(serveFile);
 app.post('/login', postLogin);
 app.use(loadUser);
 app.get('/home',serveHomePage);
+app.use(redirectLoggedInUserToHome);
+app.get('/logout',getLogout);
 
-app.get('/logout', (req, res) => {
-  res.setHeader('Set-Cookie', [`loginFailed=false,Expires=${new Date(1).toUTCString()}`, `sessionid=0,Expires=${new Date(1).toUTCString()}`]);
-  delete req.user.sessionid;
-  res.redirect('/login');
-});
 
 
 module.exports = app;
